@@ -1,7 +1,7 @@
 import os
 import smtplib
 from email.message import EmailMessage
-import socket
+from datetime import datetime
 
 
 class EmailSender:
@@ -46,13 +46,19 @@ class EmailSender:
 
         if not isinstance(recipients, (list, tuple)):
             raise ValueError("Only list or tuple of recipients is allowed")
-            self.build_message(subject, message)
+        self.build_message(subject, message)
+        log_msg = ''
 
         for recipient in recipients:
-            self.base_message['To'] = recipient
-            self.smtp_server.send_message(self.base_message)
-            print(
-                f"Successfully send Email to {recipient} from {self.email_id}")
+            now = datetime.now()
+            try:
+                self.base_message['To'] = recipient
+                self.smtp_server.send_message(self.base_message)
+                log_msg += f"[{now.strftime('%d-%m-%Y %H-%M-%S')}] Successfully send Email to {recipient} from {self.email_id}"
+            except Exception as e:
+                log_msg += f"[{now.strftime('%d-%m-%Y %H-%M-%S')}] Unable send Email to {recipient} from {self.email_id}"
+
+        return log_msg
 
     def add_attachment(self, file_data, file_name):
         if not self.connected:
@@ -67,10 +73,18 @@ class EmailSender:
 
         if not isinstance(recipients, (list, tuple)):
             raise ValueError("Only list or tuple of recipients is allowed")
-            self.build_message(subject, html_content, 'html')
+        self.build_message(subject, html_content, 'html')
+
+        log_msg = ''
 
         for recipient in recipients:
-            self.base_message['To'] = recipient
-            self.smtp_server.send_message(self.base_message)
-            print(
-                f"Successfully send Email to {recipient} from {self.email_id}")
+            now = datetime.now()
+            try:
+                self.base_message['To'] = recipient
+                self.smtp_server.send_message(self.base_message)
+                log_msg += f"[{now.strftime('%d-%m-%Y %H-%M-%S')}] Successfully send Email to {recipient} from {self.email_id}"
+
+            except Exception as e:
+                log_msg += f"[{now.strftime('%d-%m-%Y %H-%M-%S')}] Unable send Email to {recipient} from {self.email_id}"
+
+        return log_msg
