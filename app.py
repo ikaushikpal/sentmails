@@ -1,16 +1,22 @@
 import streamlit as st
+from src.loadserver import LoadServer
+from src.emailsender import EmailSender
+import os
+from PIL import Image
 
+
+PWD = os.path.dirname(os.path.abspath(__file__))
 st.title("Email Service Clone")
 
-c1, c2 = st.columns([1,1])
+left_side, right_side = st.columns([2, 1])
 
-with c1:
-    # 
-    pass
+with left_side:
+    path = os.path.join(PWD, 'static', 'pictures', 'email_background.png')
+    image = Image.open(path)
+    st.image(image)
 
-with c2:
+with right_side:
     st.subheader("Login Page")
-    st.write()
 
     # st.write('Email')
     id = st.text_input("Email ID")
@@ -24,5 +30,4 @@ with c2:
         validation = False
     
     if validation:
-        with c2:
-            st.subheader('Successfull.')
+        st.subheader('Login Successfull.')
