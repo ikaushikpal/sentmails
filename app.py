@@ -29,7 +29,7 @@ server = st.selectbox('Select proper SMTP server',
 host = loadserver.json[server]['server']
 port = loadserver.json[server]['port']
 
-state = st.button('CONNECT')
+state = st.checkbox('CONNECT')
 
 if state:
     if emailsender.connect_server(host, port):
@@ -39,7 +39,7 @@ if state:
         mail_body = st.text_area('Body')
         emailsender.build_message(mail_subject, mail_body, body_type)
         
-        uploaded_files = st.file_uploader("Choose recipient file",type=ACCEPTED_EXTENTION,accept_multiple_files=True)
+        uploaded_files = st.file_uploader("Choose file to attach")
         if uploaded_files is not None:
             for uploaded_file in uploaded_files:
                 bytes_data = uploaded_file.getvalue()
