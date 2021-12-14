@@ -17,3 +17,17 @@ with left_side:
 
 with right_side:
     st.subheader("Login Page")
+
+    # st.write('Email')
+    id = st.text_input("Email ID")
+    pw = st.text_input('Password')
+    st.button('Login')
+
+    if id=="admin" and pw == "root":
+        validation = True
+
+    else:
+        validation = False
+    
+    if validation:
+        st.subheader('Login Successfull.')
