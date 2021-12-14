@@ -4,9 +4,10 @@ from src.emailsender import EmailSender
 import os
 from PIL import Image
 import time
+import pandas as pd
 
 
-ACCEPTED_EXTENTION = ['csv','xml']
+ACCEPTED_EXTENTION = ['csv']
 emailsender = EmailSender()
 loadserver = LoadServer()
 loadserver.parse_json()
@@ -34,26 +35,57 @@ state = st.checkbox('CONNECT')
 if state:
     if emailsender.connect_server(host, port):
         st.success(f'Successfully connected to {host}:{port}')
+
         mail_subject = st.text_input('Subject')
-        body_type = st.selectbox('Message Body Type',('plain','html'))
+        body_type = st.selectbox('Message Body Type', ('Plain Text', 'HTML'))
         mail_body = st.text_area('Body')
-        emailsender.build_message(mail_subject, mail_body, body_type)
-        
-        uploaded_files = st.file_uploader("Choose file to attach")
+
+        uploaded_files = st.file_uploader(
+            "Choose file to attach", accept_multiple_files=True)
         if uploaded_files is not None:
             for uploaded_file in uploaded_files:
                 bytes_data = uploaded_file.getvalue()
                 emailsender.add_attachment(bytes_data, uploaded_file.name)
-        
-            st.write(f"{[uploaded_file.name for uploaded_file in uploaded_files]}")
+            
+            recipient_list = []
+            recipient_file = st.file_uploader("Add recipient", type=ACCEPTED_EXTENTION)
+            if recipient_file is not None:
+                reciepient_df = pd.read_csv(recipient_file)
+                st.write(reciepient_df.iloc[:,0])
+                recipient_list = reciepient_df.iloc[:,0].values.tolist()
+                # st.write(recipient_list)
 
-            st.subheader('Add recipient')
+            log_file = ''
+            receiver_mail = st.text_input('Mail to')
+            successful = 0
+            unsuccessful = 0
 
-            c_download_log, c_log_out = st.columns([1,1])
-            with c_download_log:
-                download_log_status = st.button('Download Log File')
-            with c_log_out:
-                session_status = st.button('Log Out')
-    # for validation failure
+            if st.button('SEND'):
+                if body_type == 'Plain Text':
+                    log_file, successful, unsuccessful = emailsender.send_email(
+                        recipient_list, mail_subject, mail_body)
+                else:
+                    log_file, successful, unsuccessful = emailsender.send_html(
+                        recipient_list, mail_subject, mail_body)
+
+                st.write(f"### {successful} recived mail")
+                st.write(f"### {unsuccessful} didn't recive mail")
+
+            column_download_log, column_recipient_list, column_log_out = st.columns([
+                                                                                    1, 1, 1])
+            with column_download_log:
+                download_log_status = st.download_button(
+                    label="Download log",
+                    data=log_file,
+                    file_name='current_session.log',
+                    mime='plain/text')
+
+            with column_log_out:
+                if st.button('DISCONNECT'):
+                    emailsender.disconnect_server()
+                    st.success("Successfully Disconneted from server")
+                    st.stop()
+
     else:
         st.error(f'Please check for correct credential and try again')
+        st.stop()
