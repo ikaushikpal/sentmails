@@ -5,23 +5,33 @@ import socket
 
 
 class EmailSender:
-    def __init__(self, sender_email_id, password):
-        self.sender_email_id = sender_email_id
-        self.password = password
+    def __init__(self):
+        self.email_id = None
+        self.password = None
         self.base_message = EmailMessage()
-        self.base_message['From'] = self.sender_email_id
         self.smtp_server = None
         self.connected = False
 
+    def add_user_credential(self, email_id, password):
+        self.email_id = email_id
+        self.password = password
+        self.base_message['From'] = self.email_id
+
     def connect_server(self, host, port, timeout=10):
         try:
-            self.smtp_server = smtplib.SMTP_SSL(host, port, timeout)
-            self.smtp_server.login(self.sender_email_id, self.password)
-            self.connected = True
-            print(f"{self.sender_email_id} Connected to {host}:{port}")
+            self.smtp_server = smtplib.SMTP(host, port, timeout=timeout)
+            self.smtp_server.ehlo()
+            self.smtp_server.starttls()
+            self.smtp_server.ehlo()
 
-        except socket.gaierror as e:
-            print(f"Unable to connect to server")
+            # self.smtp_server = smtplib.SMTP_SSL(host, port, timeout)
+
+            self.smtp_server.login(self.email_id, self.password)
+            self.connected = True
+            return True
+
+        except Exception as e:
+            return False
 
     def build_message(self, subject, message, sub_type='plain'):
         self.base_message['Subject'] = subject
@@ -39,7 +49,7 @@ class EmailSender:
             self.base_message['To'] = recipient
             self.smtp_server.send_message(self.base_message)
             print(
-                f"Successfully send Email to {recipient} from {self.sender_email_id}")
+                f"Successfully send Email to {recipient} from {self.email_id}")
 
     def add_attachment(self, file_data, file_name):
         if not self.connected:
@@ -60,4 +70,4 @@ class EmailSender:
             self.base_message['To'] = recipient
             self.smtp_server.send_message(self.base_message)
             print(
-                f"Successfully send Email to {recipient} from {self.sender_email_id}")
+                f"Successfully send Email to {recipient} from {self.email_id}")
