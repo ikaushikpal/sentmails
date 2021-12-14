@@ -46,6 +46,14 @@ if state:
                 emailsender.add_attachment(bytes_data, uploaded_file.name)
         
             st.write(f"{[uploaded_file.name for uploaded_file in uploaded_files]}")
+
+            st.subheader('Add recipient')
+
+            c_download_log, c_log_out = st.columns([1,1])
+            with c_download_log:
+                download_log_status = st.button('Download Log File')
+            with c_log_out:
+                session_status = st.button('Log Out')
     # for validation failure
     else:
         st.error(f'Please check for correct credential and try again')
