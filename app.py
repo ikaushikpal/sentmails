@@ -6,7 +6,7 @@ from PIL import Image
 import time
 
 
-ACCEPTED_EXTENTION = ['csv','xml']
+ACCEPTED_EXTENTION = ['csv', 'xml']
 emailsender = EmailSender()
 loadserver = LoadServer()
 loadserver.parse_json()
@@ -29,23 +29,24 @@ server = st.selectbox('Select proper SMTP server',
 host = loadserver.json[server]['server']
 port = loadserver.json[server]['port']
 
-state = st.button('CONNECT')
+state = st.checkbox('CONNECT')
 
 if state:
     if emailsender.connect_server(host, port):
         st.success(f'Successfully connected to {host}:{port}')
+
         mail_subject = st.text_input('Subject')
-        body_type = st.selectbox('Message Body Type',('plain','html'))
+        body_type = st.selectbox('Message Body Type', ('plain', 'html'))
         mail_body = st.text_area('Body')
+
         emailsender.build_message(mail_subject, mail_body, body_type)
-        
-        uploaded_files = st.file_uploader("Choose recipient file",type=ACCEPTED_EXTENTION,accept_multiple_files=True)
+
+        uploaded_files = st.file_uploader(
+            "Attach files to email", type=None, accept_multiple_files=True)
         if uploaded_files is not None:
             for uploaded_file in uploaded_files:
                 bytes_data = uploaded_file.getvalue()
                 emailsender.add_attachment(bytes_data, uploaded_file.name)
-        
-            st.write(f"{[uploaded_file.name for uploaded_file in uploaded_files]}")
-    # for validation failure
+
     else:
         st.error(f'Please check for correct credential and try again')

@@ -18,6 +18,9 @@ class EmailSender:
         self.base_message['From'] = self.email_id
 
     def connect_server(self, host, port, timeout=10):
+        if self.connected:
+            return True
+
         try:
             self.smtp_server = smtplib.SMTP(host, port, timeout=timeout)
             self.smtp_server.ehlo()
