@@ -1,0 +1,38 @@
+{
+    "Gmail" : {
+        "server" : "smtp.gmail.com",
+        "port" : 587
+    },
+    "Yahoo Mail" : {
+        "server" : "smtp.mail.yahoo.com",
+        "port" : 465
+    },
+    "Yahoo Mail Plus" : {
+        "server" : "plus.smtp.mail.yahoo.com",
+        "port" : 465
+    },
+    "Outlook" : {
+        "server" : "smtp-mail.outlook.com",
+        "port" : 587
+    },
+    "Office365" : {
+        "server" : "smtp.office365.com",
+        "port" : 587
+    },
+    "Hotmail" : {
+        "server" : "smtp.live.com",
+        "port" : 587
+    },
+    "AOL" : {
+        "server" : "smtp.aol.com",
+        "port" : 465
+    },
+    "Verizon" : {
+        "server" : "smtp.mail.vzw.com",
+        "port" : 465
+    },
+    "Orange" : {
+        "server" : "smtp.orange.fr",
+        "port" : 465
+    }
+}
